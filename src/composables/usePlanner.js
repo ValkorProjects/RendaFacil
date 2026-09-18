@@ -373,7 +373,7 @@ export function usePlanner(cycleIndexRef, cycleIndexOfDate) {
    * fatura — como compra única (1x) ou como parcelamento (2x ou mais).
    */
   const addQuickExpense = async ({ name, amount, pagamento = 'debito', parcelas = 1 }) => {
-    if (!name || !amount) return
+    if (!name || !(Number(amount) > 0)) return
     if (pagamento === 'debito') return addOneTime(name, amount, 'debito')
     const n = Math.min(Math.max(parseInt(parcelas, 10) || 1, 1), 60)
     if (n <= 1) return addOneTime(name, amount, 'credito')
