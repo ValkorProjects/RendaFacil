@@ -42,7 +42,7 @@ export const addMonthsISO = (iso, delta) => {
 export const closingMonthOf = (iso, closingDay) => {
   const { y, m, d } = parseISO(iso)
   // Compra a partir do dia do fechamento já cai na fatura do mês seguinte
-  const shift = d >= closingDay ? 1 : 0
+  const shift = d >= clampDay(y, m, closingDay) ? 1 : 0
   const total = y * 12 + m + shift
   return { year: Math.floor(total / 12), month: ((total % 12) + 12) % 12 }
 }
