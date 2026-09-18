@@ -19,3 +19,27 @@ alter table public.planner_parcelas
 
 create index if not exists idx_pl_parcelas_categoria
   on public.planner_parcelas (categoria_id);
+
+drop policy if exists planner_parcelas_owner on public.planner_parcelas;
+create policy planner_parcelas_owner on public.planner_parcelas
+  for all
+  using (
+    auth.uid() = usuario_id
+    and (
+      categoria_id is null
+      or exists (
+        select 1 from public.planner_categorias c
+        where c.id = categoria_id and c.usuario_id = auth.uid()
+      )
+    )
+  )
+  with check (
+    auth.uid() = usuario_id
+    and (
+      categoria_id is null
+      or exists (
+        select 1 from public.planner_categorias c
+        where c.id = categoria_id and c.usuario_id = auth.uid()
+      )
+    )
+  );

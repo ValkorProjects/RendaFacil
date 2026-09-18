@@ -330,7 +330,27 @@ create policy planner_contas_fixas_owner on public.planner_contas_fixas
 
 drop policy if exists planner_parcelas_owner on public.planner_parcelas;
 create policy planner_parcelas_owner on public.planner_parcelas
-  for all using (auth.uid() = usuario_id) with check (auth.uid() = usuario_id);
+  for all
+  using (
+    auth.uid() = usuario_id
+    and (
+      categoria_id is null
+      or exists (
+        select 1 from public.planner_categorias c
+        where c.id = categoria_id and c.usuario_id = auth.uid()
+      )
+    )
+  )
+  with check (
+    auth.uid() = usuario_id
+    and (
+      categoria_id is null
+      or exists (
+        select 1 from public.planner_categorias c
+        where c.id = categoria_id and c.usuario_id = auth.uid()
+      )
+    )
+  );
 
 drop policy if exists planner_compras_unicas_owner on public.planner_compras_unicas;
 create policy planner_compras_unicas_owner on public.planner_compras_unicas
